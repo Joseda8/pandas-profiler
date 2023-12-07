@@ -33,3 +33,6 @@ dist/
 
 # CSV files
 *.csv
+
+# Testing data
+testing_data/*.json

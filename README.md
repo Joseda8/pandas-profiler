@@ -22,7 +22,7 @@ The **profiler** is a Python script designed to measure and record various syste
 
 First you have to run the profiler with the desired options. For example:
 ```bash
-python profiler.py --csv_file system_stats.csv --profiled_file test_script
+python3 profiler.py --csv_file system_stats.csv --profiled_file test_script
 ```
 
 Now run the script to profile, `test_script.py` for the example shown above.
@@ -43,3 +43,13 @@ The script measures the following system statistics:
 - **Swap Memory Usage**: Percentage of swap memory usage.
 - **Used Swap Memory**: Amount of swap memory used in gigabytes.
 - **Program Running**: Whether the specified program is currently running.
+
+# Downloader
+
+To download testing data the API `randomuser` is used to download 5000 records and store them in a JSON file in the folder `testing_data`.
+
+Use this script with:
+
+```bash
+python3 downloader.py
+```

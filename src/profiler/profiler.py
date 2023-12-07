@@ -16,7 +16,7 @@ class SystemStatsCollector:
             - Usage of swap memory (%, GB)
         """
         self._start_time = time.time()
-        self._csv_file_path = csv_file_path
+        self._csv_file_path = f"results/{csv_file_path}"
         self._num_cpu_cores = psutil.cpu_count(logical=False)
         self._file_profiled = file_profiled
 

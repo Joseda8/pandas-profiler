@@ -27,7 +27,7 @@ class ColoredFormatter(logging.Formatter):
         return f"{self.COLOR_CODES.get(record.levelname, '')}{log_message}\033[0m"
 
 
-def setup_logging(level="INFO"):
+def setup_logging(level="DEBUG"):
     """
     Set up colored logging.
 

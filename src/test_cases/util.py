@@ -1,8 +1,10 @@
 import json
 from itertools import cycle, islice
+from typing import Dict, Tuple
 
 import pandas as pd
 
+from src.util.cache_data import cache_data
 from src.util.logger import setup_logging
 
 # Set up the logging configuration
@@ -79,7 +81,7 @@ def read_json_to_dataframe(file_path="testing_data/users_data.json", num_records
         logger.error(f"Error reading JSON file: {e}")
         return None
 
-def dataframe_to_dict(df):
+def dataframe_to_dict(df: pd.DataFrame) -> Dict:
     """
     Converts a Pandas DataFrame to a dictionary.
 
@@ -90,3 +92,24 @@ def dataframe_to_dict(df):
         dict: The dictionary representation of the DataFrame.
     """
     return df.to_dict()
+
+def extract_user_data(num_records: int) -> Tuple[pd.DataFrame, Dict]:
+    """
+    Processes user data by reading it from a JSON file into a DataFrame,
+    caching the DataFrame, and converting it to a dictionary, caching the result.
+
+    Parameters:
+        num_records (int): The number of records to be processed.
+
+    Returns:
+        Tuple[pd.DataFrame, dict]: A tuple containing the DataFrame and its dictionary representation.
+    """
+    # Assuming cache_data, read_json_to_dataframe, and dataframe_to_dict are defined elsewhere
+
+    # Reading user data into a DataFrame and caching it
+    df_users: pd.DataFrame = cache_data(func=read_json_to_dataframe, file_name=f"users_dataframe_{num_records}", cache=True, num_records=num_records)
+
+    # Converting the DataFrame to a dictionary and caching the result
+    dict_users: Dict = cache_data(func=dataframe_to_dict, file_name=f"users_dictionary_{num_records}", cache=True, df=df_users)
+
+    return df_users, dict_users

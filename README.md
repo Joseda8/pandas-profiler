@@ -15,7 +15,7 @@ The **profiler** is a Python script designed to measure and record various syste
 ## Usage
 
 ### Command-line Options
-- `--csv_file`: Path to the CSV file for storing system stats. Default is `system_stats.csv`.
+- `--csv_prefix`: Prefix of the CSV file for storing system stats. Default is `system_stats`.
 - `--profiled_file`: Name of the program to profile. Default is `test_script`.
 
 ### Running the Script

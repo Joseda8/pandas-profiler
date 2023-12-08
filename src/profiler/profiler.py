@@ -3,7 +3,10 @@ import csv
 import psutil
 import time
 
+from datetime import datetime
+
 from src.util.logger import setup_logging
+from src.util.sockets import Server
 
 # Set up the logging configuration
 logger = setup_logging()
@@ -19,10 +22,14 @@ class SystemStatsCollector:
             - Usage of physical RAM (%, GB)
             - Usage of swap memory (%, GB)
         """
+        # Get the current date and time as a string
+        current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
+
         self._start_time = time.time()
-        self._csv_file_path = f"results/{csv_file_path}.csv"
+        self._csv_file_path = f"results/{csv_file_path}_{file_profiled}_{current_datetime}.csv"
         self._num_cpu_cores = psutil.cpu_count(logical=False)
         self._file_profiled = file_profiled
+        self._socket_server = Server("127.0.0.1", 8888)
 
         # Constants
         self._col_name_timestamp = "timestamp"
@@ -34,8 +41,7 @@ class SystemStatsCollector:
         self._col_name_disk_swap_used = "disk_swap_used"
         self._col_name_program_running = "program_running"
 
-    @staticmethod
-    def is_program_running(program_name: str, last_state: bool) -> bool:
+    def is_program_running(self, program_name: str, last_state: bool) -> bool:
         """
         Check if a program with a specific name is currently running.
 
@@ -49,7 +55,7 @@ class SystemStatsCollector:
         is_running = False
 
         # Iterate through the list of processes and retrieve their PIDs and names
-        for process in psutil.process_iter(['pid', 'name']):
+        for process in psutil.process_iter(["pid", "name"]):
             cmd_arguments = process.cmdline()
             # Check if the process has command line arguments
             if len(cmd_arguments) > 0:
@@ -57,7 +63,7 @@ class SystemStatsCollector:
                 is_python = cmd_arguments[0].find("python") != -1
 
                 if is_python:
-                    # Extract the script name if it's a Python script
+                    # Extract the script name if it"s a Python script
                     if cmd_arguments[1] == "-m":
                         script_name = cmd_arguments[2]
                     else:
@@ -68,7 +74,8 @@ class SystemStatsCollector:
                         is_running = True
                         if last_state == False:
                             logger.info(f"The program {program_name} was detected...")
-                            input("Press Enter to continue the profiling")
+                            self._socket_server.wait_for_message(expected_message="start")
+                            self._socket_server.stop_server()
 
         return is_running
     
@@ -129,14 +136,15 @@ class SystemStatsCollector:
             try:
                 last_state = False
                 while True:
+                    # Verify if program is running
+                    is_running = self.is_program_running(program_name=self._file_profiled, last_state=last_state)
+                    last_state = is_running
                     # Get system statistics
                     overall_cpu_usage = self._get_overall_cpu_usage()
                     cpu_usage_per_core = self._get_cpu_usage_per_core()
                     ram_percent, ram_used = self._get_ram_usage()
                     disk_percent, disk_used = self._get_disk_usage()
-                    timestamp = time.time() - self._start_time
-                    is_running = SystemStatsCollector.is_program_running(program_name=self._file_profiled, last_state=last_state)
-                    last_state = is_running
+                    timestamp = round(time.time() - self._start_time, 2)
 
                     # Create a dictionary for the row data
                     row_data = {
@@ -156,10 +164,10 @@ class SystemStatsCollector:
                     # Write the row to the CSV file
                     writer.writerow(row_data)
 
-                    logger.debug(f"Execution time: {timestamp:.3f} seconds")
+                    logger.debug(f"Execution time: {timestamp} seconds")
 
             except KeyboardInterrupt:
-                pass
+                self._socket_server.stop_server()
 
             finally:
                 end_time = time.time()
@@ -172,10 +180,10 @@ class SystemStatsCollector:
 # -----------------
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Collect system stats and write them to a CSV file.")
-    parser.add_argument("--csv_file", default="system_stats", help="Path to the CSV file for storing system stats.")
+    parser.add_argument("--csv_prefix", default="system_stats", help="Path to the CSV file for storing system stats.")
     parser.add_argument("--profiled_file", help="Name of the program to profile.")
 
     args = parser.parse_args()
 
-    stats_collector = SystemStatsCollector(args.csv_file, args.profiled_file)
+    stats_collector = SystemStatsCollector(args.csv_prefix, args.profiled_file)
     stats_collector.measure_and_write_stats_to_csv()

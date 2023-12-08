@@ -1,3 +1,12 @@
+"""
+This benchmark replaces all values in the "password" column with "XXXXXXXX" in a Pandas DataFrame.
+
+Benchmark Steps:
+1. Load user data into a Pandas DataFrame with a specified number of records.
+2. Replace all values in the "password" column with "XXXXXXXX".
+3. Measure and log the execution time for the operation.
+"""
+
 import time
 
 from src.util.logger import setup_logging
@@ -18,7 +27,7 @@ except:
 
 # Do not measure the execution time of this
 num_records = 2000000
-df_users, _ = extract_user_data(num_records=num_records)
+df_users = extract_user_data(num_records=num_records, output_type="dataframe")
 logger.info("The required information was loaded successfully")
 if is_server:
     socket_client.send_message(message="start")
@@ -27,13 +36,13 @@ if is_server:
 # Operation
 # -----------
 
-# Start timer for DataFrame
+# Start timer
 start_time_df = time.time()
 
 # Replace all values in the "password" column with "XXXXXXXX" in the DataFrame
 df_users["password"] = "XXXXXXXX"
 
-# Stop timer for DataFrame
+# Stop timer
 end_time_df = time.time()
 execution_time_df = end_time_df - start_time_df
 logger.info(f"Execution Time: {execution_time_df} seconds")

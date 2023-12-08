@@ -91,25 +91,37 @@ def dataframe_to_dict(df: pd.DataFrame) -> Dict:
     Returns:
         dict: The dictionary representation of the DataFrame.
     """
-    return df.to_dict()
+    return df.to_dict("records")
 
-def extract_user_data(num_records: int) -> Tuple[pd.DataFrame, Dict]:
+from typing import Union
+
+def extract_user_data(num_records: int, output_type: str) -> Union[pd.DataFrame, Dict]:
     """
     Processes user data by reading it from a JSON file into a DataFrame,
     caching the DataFrame, and converting it to a dictionary, caching the result.
 
     Parameters:
         num_records (int): The number of records to be processed.
+        output_type (str): The desired output type ("dataframe", "dictionary", or "both").
 
     Returns:
-        Tuple[pd.DataFrame, dict]: A tuple containing the DataFrame and its dictionary representation.
+        Union[pd.DataFrame, dict]: Either a DataFrame, a dictionary, or both based on the specified output_type.
     """
     # Assuming cache_data, read_json_to_dataframe, and dataframe_to_dict are defined elsewhere
 
     # Reading user data into a DataFrame and caching it
     df_users: pd.DataFrame = cache_data(func=read_json_to_dataframe, file_name=f"users_dataframe_{num_records}", cache=True, num_records=num_records)
 
-    # Converting the DataFrame to a dictionary and caching the result
-    dict_users: Dict = cache_data(func=dataframe_to_dict, file_name=f"users_dictionary_{num_records}", cache=True, df=df_users)
-
-    return df_users, dict_users
+    if output_type == "dataframe":
+        return df_users
+    elif output_type == "dictionary":
+        # Converting the DataFrame to a dictionary and caching the result
+        dict_users: Dict = cache_data(func=dataframe_to_dict, file_name=f"users_dictionary_{num_records}", cache=True, df=df_users)
+        del df_users
+        return dict_users
+    elif output_type == "both":
+        # Converting the DataFrame to a dictionary and caching the result
+        dict_users: Dict = cache_data(func=dataframe_to_dict, file_name=f"users_dictionary_{num_records}", cache=True, df=df_users)
+        return df_users, dict_users
+    else:
+        raise ValueError("Invalid output_type. Please choose 'dataframe', 'dictionary', or 'both'.")

@@ -18,7 +18,7 @@ except:
 
 # Do not measure the execution time of this
 num_records = 2000000
-_, _ = extract_user_data(num_records=num_records)
+_, _ = extract_user_data(num_records=num_records, output_type="both")
 logger.info("The required information was loaded successfully")
 if is_server:
     socket_client.send_message(message="start")
@@ -27,14 +27,14 @@ if is_server:
 # Operation
 # -----------
 
-# Start timer for Dictionary
+# Start timer
 start_time_dict = time.time()
 
 
 # Code
 
 
-# Stop timer for Dictionary
+# Stop timer
 end_time_dict = time.time()
 execution_time_dict = end_time_dict - start_time_dict
 logger.info(f"Execution Time: {execution_time_dict} seconds")

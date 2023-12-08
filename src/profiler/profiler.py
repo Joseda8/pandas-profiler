@@ -179,6 +179,7 @@ class SystemStatsCollector:
 
                 # Ask the user for execution time of the program
                 execution_time_input = input("Enter execution time (in seconds): ")
+                num_records = input("Enter the number of records used: ")
                 
                 # Validate the user input
                 try:
@@ -196,10 +197,10 @@ class SystemStatsCollector:
 
                     # If the file doesn't exist, write header
                     if not is_file_exists:
-                        exec_times_writer.writerow(["filename", "time"])
+                        exec_times_writer.writerow(["filename", "records", "time"])
 
                     # Write the data
-                    exec_times_writer.writerow([self._csv_file_name, execution_time])
+                    exec_times_writer.writerow([self._csv_file_name, num_records, execution_time])
 
 # -----------------
 # Main

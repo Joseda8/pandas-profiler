@@ -1,5 +1,6 @@
 import argparse
 import csv
+import os
 import psutil
 import time
 
@@ -26,7 +27,8 @@ class SystemStatsCollector:
         current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
 
         self._start_time = time.time()
-        self._csv_file_path = f"results/{csv_file_path}_{file_profiled}_{current_datetime}.csv"
+        self._csv_file_name = f"{csv_file_path}_{file_profiled}_{current_datetime}"
+        self._csv_file_path = f"results/{self._csv_file_name}.csv"
         self._num_cpu_cores = psutil.cpu_count(logical=False)
         self._file_profiled = file_profiled
         self._socket_server = Server("127.0.0.1", 8888)
@@ -170,10 +172,34 @@ class SystemStatsCollector:
                 self._socket_server.stop_server()
 
             finally:
+                # Log total execution time
                 end_time = time.time()
                 total_execution_time = end_time - self._start_time
                 logger.info(f"\nTotal Execution Time: {total_execution_time:.2f} seconds")
 
+                # Ask the user for execution time of the program
+                execution_time_input = input("Enter execution time (in seconds): ")
+                
+                # Validate the user input
+                try:
+                    execution_time = float(execution_time_input)
+                except ValueError:
+                    logger.error("Invalid input. Please enter a valid number.")
+                    execution_time = 0.0
+                
+                # Create or append execution time information to "execution_times.csv"
+                exec_times_file_path = "results/execution_times.csv"
+                is_file_exists = os.path.isfile(exec_times_file_path)
+
+                with open(exec_times_file_path, mode="a", newline="") as exec_times_file:
+                    exec_times_writer = csv.writer(exec_times_file)
+
+                    # If the file doesn't exist, write header
+                    if not is_file_exists:
+                        exec_times_writer.writerow(["filename", "time"])
+
+                    # Write the data
+                    exec_times_writer.writerow([self._csv_file_name, execution_time])
 
 # -----------------
 # Main

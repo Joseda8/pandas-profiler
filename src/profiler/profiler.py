@@ -20,7 +20,7 @@ class SystemStatsCollector:
             - Usage of swap memory (%, GB)
         """
         self._start_time = time.time()
-        self._csv_file_path = f"results/{csv_file_path}"
+        self._csv_file_path = f"results/{csv_file_path}.csv"
         self._num_cpu_cores = psutil.cpu_count(logical=False)
         self._file_profiled = file_profiled
 
@@ -35,12 +35,13 @@ class SystemStatsCollector:
         self._col_name_program_running = "program_running"
 
     @staticmethod
-    def is_program_running(program_name: str) -> bool:
+    def is_program_running(program_name: str, last_state: bool) -> bool:
         """
         Check if a program with a specific name is currently running.
 
         Parameters:
             program_name (str): The name of the program to check.
+            last_state (bool): Last state of the program execution detection.
 
         Returns:
             bool: True if the program is running, False otherwise.
@@ -65,6 +66,9 @@ class SystemStatsCollector:
                     # Check if the script name matches the specified program name
                     if script_name.find(program_name) != -1:
                         is_running = True
+                        if last_state == False:
+                            logger.info(f"The program {program_name} was detected...")
+                            input("Press Enter to continue the profiling")
 
         return is_running
     
@@ -112,6 +116,7 @@ class SystemStatsCollector:
         """
         Measures system statistics and writes them to a CSV file.
         """
+        logger.info("Profiling system state before program execution...")
         with open(self._csv_file_path, mode="w", newline="") as csv_file:
             # Combine all column names into a single list for fieldnames
             fieldnames = [self._col_name_timestamp, self._col_name_cpu_usage] + self._col_name_cpu_cores + [
@@ -122,13 +127,16 @@ class SystemStatsCollector:
             writer.writeheader()
 
             try:
+                last_state = False
                 while True:
                     # Get system statistics
-                    cpu_usage_per_core = self._get_cpu_usage_per_core()
                     overall_cpu_usage = self._get_overall_cpu_usage()
+                    cpu_usage_per_core = self._get_cpu_usage_per_core()
                     ram_percent, ram_used = self._get_ram_usage()
                     disk_percent, disk_used = self._get_disk_usage()
                     timestamp = time.time() - self._start_time
+                    is_running = SystemStatsCollector.is_program_running(program_name=self._file_profiled, last_state=last_state)
+                    last_state = is_running
 
                     # Create a dictionary for the row data
                     row_data = {
@@ -138,7 +146,7 @@ class SystemStatsCollector:
                         self._col_name_ram_used: ram_used,
                         self._col_name_disk_swap_usage: disk_percent,
                         self._col_name_disk_swap_used: disk_used,
-                        self._col_name_program_running: SystemStatsCollector.is_program_running(self._file_profiled)
+                        self._col_name_program_running: is_running
                     }
 
                     # Populate CPU core data dynamically based on the number of cores
@@ -148,7 +156,7 @@ class SystemStatsCollector:
                     # Write the row to the CSV file
                     writer.writerow(row_data)
 
-                    logger.info(f"Execution time: {timestamp:.3f} seconds")
+                    logger.debug(f"Execution time: {timestamp:.3f} seconds")
 
             except KeyboardInterrupt:
                 pass
@@ -164,8 +172,8 @@ class SystemStatsCollector:
 # -----------------
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Collect system stats and write them to a CSV file.")
-    parser.add_argument("--csv_file", default="system_stats.csv", help="Path to the CSV file for storing system stats.")
-    parser.add_argument("--profiled_file", default="test_script", help="Name of the program to profile.")
+    parser.add_argument("--csv_file", default="system_stats", help="Path to the CSV file for storing system stats.")
+    parser.add_argument("--profiled_file", help="Name of the program to profile.")
 
     args = parser.parse_args()
 

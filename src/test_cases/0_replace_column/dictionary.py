@@ -15,6 +15,9 @@ logger = setup_logging()
 num_records = 500000
 df_users: pd.DataFrame = cache_data(func=read_json_to_dataframe, file_name=f"users_dataframe_{num_records}", cache=True, num_records=num_records)
 dict_users: Dict = cache_data(func=dataframe_to_dict, file_name=f"users_dictionary_{num_records}", cache=True, df=df_users)
+del df_users
+logger.info("The required information was loaded successfully")
+input("Press Enter to continue the execution...")
 
 # -----------
 # Operation

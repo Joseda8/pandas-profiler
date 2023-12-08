@@ -11,6 +11,12 @@ logger = setup_logging()
 # Do not measure the execution time of this
 num_records = 500000
 df_users: pd.DataFrame = cache_data(func=read_json_to_dataframe, file_name=f"users_dataframe_{num_records}", cache=True, num_records=num_records)
+logger.info("The required information was loaded successfully")
+input("Press Enter to continue the execution...")
+
+# -----------
+# Operation
+# -----------
 
 # Start timer for DataFrame
 start_time_df = time.time()

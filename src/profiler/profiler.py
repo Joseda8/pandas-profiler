@@ -3,6 +3,10 @@ import csv
 import psutil
 import time
 
+from src.util.logger import setup_logging
+
+# Set up the logging configuration
+logger = setup_logging()
 
 class SystemStatsCollector:
     def __init__(self, csv_file_path: str, file_profiled: str):
@@ -144,7 +148,7 @@ class SystemStatsCollector:
                     # Write the row to the CSV file
                     writer.writerow(row_data)
 
-                    print(f"Execution time: {timestamp:.3f} seconds")
+                    logger.info(f"Execution time: {timestamp:.3f} seconds")
 
             except KeyboardInterrupt:
                 pass
@@ -152,7 +156,7 @@ class SystemStatsCollector:
             finally:
                 end_time = time.time()
                 total_execution_time = end_time - self._start_time
-                print(f"\nTotal Execution Time: {total_execution_time:.2f} seconds")
+                logger.info(f"\nTotal Execution Time: {total_execution_time:.2f} seconds")
 
 
 # -----------------

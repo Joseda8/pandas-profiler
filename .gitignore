@@ -34,5 +34,9 @@ dist/
 # CSV files
 *.csv
 
+# Pickle files
+*.pkl
+*.pickle
+
 # Testing data
 testing_data/*.json

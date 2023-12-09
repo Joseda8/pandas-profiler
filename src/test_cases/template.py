@@ -28,13 +28,13 @@ if is_server:
 # -----------
 
 # Start timer
-start_time_dict = time.time()
+start_time = time.time()
 
 
 # Code
 
 
 # Stop timer
-end_time_dict = time.time()
-execution_time_dict = end_time_dict - start_time_dict
-logger.info(f"Execution Time: {execution_time_dict} seconds")
+end_time = time.time()
+execution_time = end_time - start_time
+logger.info(f"Execution Time: {execution_time} seconds")

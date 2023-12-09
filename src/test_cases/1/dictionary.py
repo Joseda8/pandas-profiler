@@ -39,7 +39,7 @@ if is_server:
 # -----------
 
 # Start timer
-start_time_dict = time.time()
+start_time = time.time()
 
 # Operation 1: Filtering female users and grouping by country in the list
 filtered_female_list = [user for user in dict_users if user["gender"] == "female"]
@@ -58,6 +58,6 @@ for country, data in grouped_female_dict.items():
     average_age_female_dict[country] = data["age_sum"] / data["count"]
 
 # Stop timer
-end_time_dict = time.time()
-execution_time_dict = end_time_dict - start_time_dict
-logger.info(f"Execution Time: {execution_time_dict} seconds")
+end_time = time.time()
+execution_time = end_time - start_time
+logger.info(f"Execution Time: {execution_time} seconds")

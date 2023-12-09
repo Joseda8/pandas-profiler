@@ -37,13 +37,13 @@ if is_server:
 # -----------
 
 # Start timer
-start_time_dict = time.time()
+start_time = time.time()
 
 # Replace all values in the "password" key with "XXXXXXXX" in the dictionary
 for user in dict_users:
     user['password'] = 'XXXXXXXX'
 
 # Stop timer
-end_time_dict = time.time()
-execution_time_dict = end_time_dict - start_time_dict
-logger.info(f"Execution Time: {execution_time_dict} seconds")
+end_time = time.time()
+execution_time = end_time - start_time
+logger.info(f"Execution Time: {execution_time} seconds")

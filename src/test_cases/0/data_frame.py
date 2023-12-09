@@ -37,12 +37,12 @@ if is_server:
 # -----------
 
 # Start timer
-start_time_df = time.time()
+start_time = time.time()
 
 # Replace all values in the "password" column with "XXXXXXXX" in the DataFrame
 df_users["password"] = "XXXXXXXX"
 
 # Stop timer
-end_time_df = time.time()
-execution_time_df = end_time_df - start_time_df
-logger.info(f"Execution Time: {execution_time_df} seconds")
+end_time = time.time()
+execution_time = end_time - start_time
+logger.info(f"Execution Time: {execution_time} seconds")

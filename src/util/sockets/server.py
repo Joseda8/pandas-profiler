@@ -1,4 +1,5 @@
 import socket
+import time
 
 class Server:
     def __init__(self, host, port):
@@ -12,7 +13,21 @@ class Server:
         self.host = host
         self.port = port
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_socket.bind((self.host, self.port))
+        self.bind_socket()
+
+    def bind_socket(self):
+        """Binds the server socket to the specified host and port with retry."""
+        while True:
+            try:
+                self.server_socket.bind((self.host, self.port))
+                break
+            except OSError as e:
+                if e.errno == 98:  # Address already in use
+                    print(f"Port {self.port} is still in use. Retrying in 1 second...")
+                    time.sleep(1)
+                else:
+                    raise
+
         self.server_socket.listen(5)
 
     def stop_server(self):

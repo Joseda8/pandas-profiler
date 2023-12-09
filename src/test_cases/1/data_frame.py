@@ -38,7 +38,7 @@ if is_server:
 # -----------
 
 # Start timer
-start_time_dict = time.time()
+start_time = time.time()
 
 # Operation 1: Filtering female users and grouping by country in DataFrame
 female_users_df = df_users[df_users['gender'] == 'female']
@@ -48,6 +48,6 @@ grouped_female_df = female_users_df.groupby('country').size().reset_index(name='
 average_age_female_df = female_users_df.groupby('country')['age'].mean().reset_index(name='average_age')
 
 # Stop timer
-end_time_dict = time.time()
-execution_time_dict = end_time_dict - start_time_dict
-logger.info(f"Execution Time: {execution_time_dict} seconds")
+end_time = time.time()
+execution_time = end_time - start_time
+logger.info(f"Execution Time: {execution_time} seconds")

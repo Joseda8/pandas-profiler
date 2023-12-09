@@ -29,7 +29,7 @@ except:
 # Do not measure the execution time of this
 num_records = 2000000
 df_users = extract_user_data(num_records=num_records, output_type="dataframe")
-logger.info("The required information was loaded successfully")
+logger.info(f"The required information was loaded successfully. Number of records: {num_records}")
 if is_server:
     socket_client.send_message(message="start")
 

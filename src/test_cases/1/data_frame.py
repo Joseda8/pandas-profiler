@@ -48,11 +48,11 @@ if is_server:
 start_time = time.time()
 
 # Operation 1: Filtering female users and grouping by country in DataFrame
-female_users_df = df_users[df_users['gender'] == 'female']
-grouped_female_df = female_users_df.groupby('country').size().reset_index(name='female_count')
+female_users_df = df_users[df_users["gender"] == "female"]
+grouped_female_df = female_users_df.groupby("country").size().reset_index(name="female_count")
 
 # Operation 2: Finding the average age of women per country in DataFrame
-average_age_female_df = female_users_df.groupby('country')['age'].mean().reset_index(name='average_age')
+average_age_female_df = female_users_df.groupby("country")["age"].mean().reset_index(name="average_age")
 
 # Stop timer
 end_time = time.time()

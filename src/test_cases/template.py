@@ -18,7 +18,7 @@ except:
 
 # Use argparse to get num_records from the terminal
 parser = argparse.ArgumentParser(description="Perform a test.")
-parser.add_argument("--num_records", type=int, help="Number of records to process")
+parser.add_argument("--num_records", type=int, required=True, help="Number of records to process")
 args = parser.parse_args()
 
 # Extract data

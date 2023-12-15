@@ -6,10 +6,25 @@ from src.util.logger import setup_logging
 logger = setup_logging()
 
 class Preprocessing:
+    """
+    Class for performing data preprocessing tasks.
+
+    """
+
     def __init__(self):
+        """
+        Initializes the Preprocessing class.
+        """
         pass
 
-    def truncate_decimals(self, input_file_path, output_file_path):
+    def truncate_decimals(self, input_file_path: str, output_file_path: str) -> None:
+        """
+        Truncates decimals in the "time" column of a CSV file and saves the modified DataFrame to a new CSV file.
+
+        Parameters:
+        input_file_path (str): The path to the input CSV file.
+        output_file_path (str): The path to save the preprocessed CSV file.
+        """
         try:
             # Load CSV file
             df = pd.read_csv(input_file_path)
@@ -25,7 +40,7 @@ class Preprocessing:
         except Exception as e:
             logger.error(f"Error during preprocessing: {str(e)}")
 
-# Example usage:
+
 if __name__ == "__main__":
     # Initialize the Preprocessing class
     processor = Preprocessing()

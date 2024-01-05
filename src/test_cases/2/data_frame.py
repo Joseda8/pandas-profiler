@@ -38,26 +38,9 @@ if is_server:
 start_time = time.time()
 
 
-
-#identify users between 0 and 12
-df_young_users = df_users[df_users['age'] <= 12]
-logger.info(f"Users between 0 to 12: {df_young_users}")
-
-# Identify users between 13 to 19
-df_teenage_users= df_users[(df_users['age'] > 12) & (df_users['age'] <= 19)]
-logger.info(f"Users between 13 to 19: {df_teenage_users}")
-
-# Identify users between 20 to 35
-df_youth_users = df_users[(df_users['age'] > 19) & (df_users['age'] <= 35)]
-logger.info(f"Users between 20 to 35: {df_youth_users}")
-
 # Identify users between 36 to 50
 df_adult_users = df_users[(df_users['age'] > 35) & (df_users['age'] <= 50)]
-logger.info(f"Users between 36 to 50: {df_adult_users}")
 
-# Identify users 51 and above
-df_elderly_users = df_users[df_users['age'] > 50]
-logger.info(f"Users 51 and above: {df_elderly_users}")
 
 
 # Stop timer

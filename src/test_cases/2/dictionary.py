@@ -52,8 +52,6 @@ for user in dict_users:
     if user["age"] > 35 and user["age"] <= 50:
         adult_users.append(user)
 
-
-
 # Stop timer
 end_time = time.time()
 execution_time = end_time - start_time

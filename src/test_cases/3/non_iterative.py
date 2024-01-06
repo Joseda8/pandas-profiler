@@ -1,14 +1,17 @@
 """
-This benchmark identifies the users within the age group of 36 to 50.
+Computes the number of registrations per months in a Pandas suitable way.
 
 Benchmark Steps:
 1. Load user data into a Pandas DataFrame with a specified number of records.
-2. Find the users who's age is greater than 35 and less or equal to 50.
-3. Measure the execution time for the operation.
+2. Convert the column registered_date to DateTime to extract the year and month.
+3. Sum up the value of the nationality and date by using groupby and size.
+4. Measure and log the execution time for each operation.
 """
 
 import argparse
 import time
+
+import pandas as pd
 
 from src.util.logger import setup_logging
 from src.util.sockets import Client
@@ -27,7 +30,8 @@ except:
 
 # Use argparse to get num_records from the terminal
 parser = argparse.ArgumentParser(description="Perform a test.")
-parser.add_argument("--num_records", type=int, required=True, help="Number of records to process")
+parser.add_argument("--num_records", type=int,
+                    help="Number of records to process")
 args = parser.parse_args()
 
 # Extract data
@@ -46,8 +50,14 @@ if is_server:
 # Start timer
 start_time = time.time()
 
-# Identify users between 36 to 50
-df_adult_users = df_users[(df_users['age'] > 35) & (df_users['age'] <= 50)]
+# Convert "registered_date" column to datetime
+df_users["registered_date"] = pd.to_datetime(df_users["registered_date"].str[:-1])
+df_users["year"] = df_users["registered_date"].dt.year
+df_users["month"] = df_users["registered_date"].dt.month
+
+# Group by country, year, and month, then count the occurrences
+df_country_year_month_registration = df_users.groupby(
+    ["nationality", "year", "month"]).size().reset_index(name="count")
 
 # Stop timer
 end_time = time.time()

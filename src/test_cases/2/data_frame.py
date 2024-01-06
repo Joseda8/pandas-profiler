@@ -1,3 +1,12 @@
+"""
+This benchmark identifies the users within the age group of 36 to 50.
+
+Benchmark Steps:
+1. Load user data into a Pandas DataFrame with a specified number of records.
+2. Find the users who's age is greater than 35 and less or equal to 50.
+3. Measure the execution time for the operation.
+"""
+
 import argparse
 import time
 

@@ -1,5 +1,6 @@
 """
-Computes the number of registrations per months in a Pandas suitable way.
+Computes the number of registrations per months in a Pandas suitable way
+with the whole datetime.
 
 Benchmark Steps:
 1. Load user data into a Pandas DataFrame with a specified number of records.
@@ -51,13 +52,13 @@ if is_server:
 start_time = time.time()
 
 # Convert "registered_date" column to datetime
-df_users["registered_date"] = pd.to_datetime(df_users["registered_date"].str[:-1])
-df_users["year"] = df_users["registered_date"].dt.year
-df_users["month"] = df_users["registered_date"].dt.month
+df_users["registered_date"] = pd.to_datetime(df_users["registered_date"])
 
-# Group by country, year, and month, then count the occurrences
-df_country_year_month_registration = df_users.groupby(
-    ["nationality", "year", "month"]).size().reset_index(name="count")
+# Use dt.to_period for year-month grouping
+df_users["registration_period"] = df_users["registered_date"].dt.to_period("M")
+
+# Group by nationality and registration_period, then count the occurrences
+df_country_year_month_registration = df_users.groupby(["nationality", "registration_period"]).size().reset_index(name="count")
 
 # Stop timer
 end_time = time.time()

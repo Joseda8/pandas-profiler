@@ -1,19 +1,16 @@
 """
-Computes the number of registrations per months iterating over the rows
-of a Pandas DataFrame.
+Counters the number of users per country in a Pandas suitable way.
 
 Benchmark Steps:
 1. Load user data into a Pandas DataFrame with a specified number of records.
-2. Iterate over the Pandas DataFrame looking for the nationality and registered_date fields.
-3. Sum up the value of the nationality and month accordingly.
+2. Use groupby and size to compute the value.
 4. Measure and log the execution time for each operation.
 """
 
 import argparse
 import time
 
-from collections import defaultdict
-from datetime import datetime
+import pandas as pd
 
 from src.util.logger import setup_logging
 from src.util.sockets import Client
@@ -32,7 +29,8 @@ except:
 
 # Use argparse to get num_records from the terminal
 parser = argparse.ArgumentParser(description="Perform a test.")
-parser.add_argument("--num_records", type=int, help="Number of records to process")
+parser.add_argument("--num_records", type=int,
+                    help="Number of records to process")
 args = parser.parse_args()
 
 # Extract data
@@ -51,22 +49,8 @@ if is_server:
 # Start timer
 start_time = time.time()
 
-# Initialize dictionary to store registration counts for each country and month
-country_year_month_registration = defaultdict(int)
-
-# Iterate over the DataFrame
-for index, row in df_users.iterrows():
-    country = row["nationality"]
-    registered_date = row["registered_date"]
-
-    # Convert registered_date to datetime object
-    registration_datetime = datetime.fromisoformat(registered_date[:-1])
-
-    # Extract country and month from the datetime object
-    country_year_month = (country, registration_datetime.year, registration_datetime.month)
-
-    # Increment the count for the specific country and month
-    country_year_month_registration[country_year_month] += 1
+# Group by country, year, and month, then count the occurrences
+df_country_year_month_registration = df_users.groupby(["country"]).size().reset_index(name="count")
 
 # Stop timer
 end_time = time.time()

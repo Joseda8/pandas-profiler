@@ -1,14 +1,18 @@
 """
-This benchmark identifies the users within the age group of 36 to 50.
+Counters the number of users per country iterating over the rows
+of a Pandas DataFrame.
 
 Benchmark Steps:
-1. Load user data into a Pandas Dictionary with a specified number of records.
-2. Find the users who's age is greater than 35 and less or equal to 50.
-3. Measure the execution time for the operation.
+1. Load user data into a Pandas DataFrame with a specified number of records.
+2. Iterate over the Pandas DataFrame looking for the nationality field.
+3. Sum up the value of the nationality accordingly.
+4. Measure and log the execution time for each operation.
 """
 
 import argparse
 import time
+
+from collections import defaultdict
 
 from src.util.logger import setup_logging
 from src.util.sockets import Client
@@ -27,12 +31,12 @@ except:
 
 # Use argparse to get num_records from the terminal
 parser = argparse.ArgumentParser(description="Perform a test.")
-parser.add_argument("--num_records", type=int, required=True, help="Number of records to process")
+parser.add_argument("--num_records", type=int, help="Number of records to process")
 args = parser.parse_args()
 
 # Extract data
 num_records = args.num_records
-dict_users = extract_user_data(num_records=num_records, output_type="dictionary")
+df_users = extract_user_data(num_records=num_records, output_type="dataframe")
 logger.info(f"The required information was loaded successfully. Number of records: {num_records}")
 
 # Start program
@@ -46,11 +50,14 @@ if is_server:
 # Start timer
 start_time = time.time()
 
-# Identify users between 36 to 50
-adult_users = []
-for user in dict_users:
-    if user["age"] > 35 and user["age"] <= 50:
-        adult_users.append(user)
+# Initialize dictionary to store registration counts for each country
+counter_countries = defaultdict(int)
+
+# Iterate over the DataFrame
+for index, row in df_users.iterrows():
+    # Increment the count for the specific country
+    country = row["country"]
+    counter_countries[country] += 1
 
 # Stop timer
 end_time = time.time()
